@@ -1,0 +1,60 @@
+version: "3"
+services:
+  mysql:
+    build: mysql
+    image: void/mysql
+    ports:
+      - "3306:3306"
+    volumes:
+      - "./www/mysql/logs:/var/lib/mysql-logs:rw"
+      - "./www/mysql/data:/var/lib/mysql:rw"
+    environment:
+      MYSQL_ROOT_PASSWORD: 222222
+      MYSQL_USER: test
+      MYSQL_PASSWORD: a12a12
+    networks:
+      - app_net
+
+  phpmyadmin:
+    build: phpmyadmin
+    image: void/phpmyadmin
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysql
+      PMA_USER: test
+      PMA_PASSWORD: a12a12
+    ports:
+      - "8080:80"
+    networks:
+      - app_net
+
+  redis:
+    build: redis
+    image: void/redis
+    ports:
+      - "6379:6379"
+    networks:
+      - app_net
+
+  php:
+    build: php
+    image: void/php
+    volumes:
+      - "./www:/www"
+    networks:
+      - app_net
+    # restart: always
+
+  nginx: 
+    build: nginx
+    image: void/nginx
+    volumes:
+      - "./www:/www"
+    ports:
+      - "80:80"
+    networks:
+      - app_net
+networks:
+  app_net: 
+    external: 
+      name: app_net
