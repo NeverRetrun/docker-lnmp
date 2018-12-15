@@ -6,8 +6,8 @@
 参考
 ----
 
-> https://github.com/gnulife/dphp
-> https://avnpc.com/pages/build-php-develop-env-by-docker
-> http://ju.outofmemory.cn/entry/337789
-> https://docs.docker-cn.com/get-started/
+> 1.  https://github.com/gnulife/dphp
+> 2.  https://avnpc.com/pages/build-php-develop-env-by-docker
+> 3.  http://ju.outofmemory.cn/entry/337789
+> 4.  https://docs.docker-cn.com/get-started/
 
