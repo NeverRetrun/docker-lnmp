@@ -13,7 +13,8 @@ services:
       MYSQL_USER: test
       MYSQL_PASSWORD: a12a12
     networks:
-      - app_net
+       app_net:
+        ipv4_address: 172.18.0.2
 
   phpmyadmin:
     build: phpmyadmin
@@ -56,5 +57,11 @@ services:
       - app_net
 networks:
   app_net: 
+    ipam:
+      config:
+        - subnet: 172.18.0.0/16
+          gateway: 172.18.0.1
     external: 
       name: app_net
+      
+    
