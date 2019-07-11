@@ -13,7 +13,7 @@ RUN chmod 755 /usr/local/bin/composer \
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 && apt-get update \
 && apt-get install git -y\
-&& apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libssl-dev libnghttp2-dev\
+&& apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libssl-dev libnghttp2-dev gnupg apt-transport-https dialog\
 && pecl channel-update pecl.php.net \
 && pecl install redis \
 && docker-php-ext-enable redis\
@@ -30,6 +30,19 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 --enable-http2  \
 && make clean && make &&  make install \
 && docker-php-ext-enable swoole
+
+#sqlsrv扩展
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&\
+curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list &&\
+apt-get update &&\
+ACCEPT_EULA=Y apt-get install -y msodbcsql17 &&\
+ACCEPT_EULA=Y apt-get install -y mssql-tools &&\
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile &&\
+echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc &&\
+# source ~/.bashrc &&\
+apt-get install -y unixodbc-dev &&\
+pecl install sqlsrv &&\
+docker-php-ext-enable sqlsrv
 
 WORKDIR /www
 
