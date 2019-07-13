@@ -20,9 +20,9 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 && docker-php-ext-install -j$(nproc) gd \
 && mkdir tmp  \
-&& curl -o ./tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/master.tar.gz -L  \
+&& curl -o ./tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/v4.4.0.tar.gz -L  \
 && tar zxvf ./tmp/swoole.tar.gz  \
-&& mv swoole-src* swoole-src  \
+&& mv swoole-src-4.4.0* swoole-src  \
 && cd swoole-src  \
 && phpize  \
 && ./configure \
