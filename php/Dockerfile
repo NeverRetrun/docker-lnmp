@@ -21,9 +21,9 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 && docker-php-ext-install -j$(nproc) gd \
 && docker-php-ext-install pdo pdo_mysql \
 && mkdir tmp  \
-&& curl -o ./tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/v4.4.0.tar.gz -L  \
+&& curl -o ./tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/master.tar.gz -L  \
 && tar zxvf ./tmp/swoole.tar.gz  \
-&& mv swoole-src-4.4.0* swoole-src  \
+&& mv swoole-src* swoole-src  \
 && cd swoole-src  \
 && phpize  \
 && ./configure \
