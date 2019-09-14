@@ -16,14 +16,17 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 && apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libssl-dev libnghttp2-dev gnupg apt-transport-https dialog\
 && pecl channel-update pecl.php.net \
 && pecl install redis \
-&& docker-php-ext-enable redis\
-&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+&& pecl install ds \
+&& docker-php-ext-enable redis ds \
+#&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 && docker-php-ext-install -j$(nproc) gd \
-&& docker-php-ext-install pdo pdo_mysql \
-&& docker-php-ext-install zip \
-&& mkdir tmp  \
-&& curl -o ./tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/master.tar.gz -L  \
-&& tar zxvf ./tmp/swoole.tar.gz  \
+&& docker-php-ext-install pdo pdo_mysql zip 
+# && docker-php-ext-install zip 
+# && mkdir /tmp  \
+# && curl -o ./tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/v4.4.3.tar.gz -L  \
+COPY swoole-src-4.4.5.tar.gz /tmp
+RUN tar zxvf /tmp/swoole-src-4.4.5.tar.gz  \
+# && cd /tmp/swoole-src-4.4.3 \
 && mv swoole-src* swoole-src  \
 && cd swoole-src  \
 && phpize  \
@@ -34,17 +37,17 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 && docker-php-ext-enable swoole
 
 #sqlsrv扩展
-RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&\
-curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list &&\
-apt-get update &&\
-ACCEPT_EULA=Y apt-get install -y msodbcsql17 &&\
-ACCEPT_EULA=Y apt-get install -y mssql-tools &&\
-echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile &&\
-echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc &&\
-# source ~/.bashrc &&\
-apt-get install -y unixodbc-dev &&\
-pecl install sqlsrv &&\
-docker-php-ext-enable sqlsrv
+# RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&\
+# curl https://packages.microsoft.com/config/debian/9/prod.list > /etc/apt/sources.list.d/mssql-release.list &&\
+# apt-get update &&\
+# ACCEPT_EULA=Y apt-get install -y msodbcsql17 &&\
+# ACCEPT_EULA=Y apt-get install -y mssql-tools &&\
+# echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bash_profile &&\
+# echo 'export PATH="$PATH:/opt/mssql-tools/bin"' >> ~/.bashrc &&\
+# # source ~/.bashrc &&\
+# apt-get install -y unixodbc-dev &&\
+# pecl install sqlsrv &&\
+# docker-php-ext-enable sqlsrv
 
 WORKDIR /www
 
