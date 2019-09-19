@@ -20,8 +20,10 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 && docker-php-ext-enable redis ds \
 #&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 && docker-php-ext-install -j$(nproc) gd \
-&& docker-php-ext-install pdo pdo_mysql zip 
-# && docker-php-ext-install zip 
+&& docker-php-ext-install pdo pdo_mysql zip bcmath
+
+
+#swoole 4.4.5扩展
 # && mkdir /tmp  \
 # && curl -o ./tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/v4.4.3.tar.gz -L  \
 COPY swoole-src-4.4.5.tar.gz /tmp
@@ -35,6 +37,14 @@ RUN tar zxvf /tmp/swoole-src-4.4.5.tar.gz  \
 --enable-http2  \
 && make clean && make &&  make install \
 && docker-php-ext-enable swoole
+
+# sdebug 扩展
+COPY sdebug.tar.gz /tmp
+RUN tar zxvf /tmp/sdebug.tar.gz \
+&& cd xdebug \ 
+&& ./rebuild.sh \ 
+&& docker-php-ext-enable xdebug
+
 
 #sqlsrv扩展
 # RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add - &&\
