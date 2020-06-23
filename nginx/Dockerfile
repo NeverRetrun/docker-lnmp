@@ -11,5 +11,5 @@ EXPOSE 80
 
 VOLUME /www/
 
-COPY conf/nginx.conf /etc/nginx/
+COPY conf/ /etc/nginx/
 
