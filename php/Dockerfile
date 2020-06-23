@@ -1,4 +1,4 @@
-FROM php:7.2-fpm
+FROM php:7.4.7-fpm
 
 #时间
 ENV TZ=Asia/Shanghai
@@ -7,18 +7,22 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 #Composer
 COPY composer.phar /usr/local/bin/composer
 RUN chmod 755 /usr/local/bin/composer \
-&& composer config -g repo.packagist composer https://packagist.phpcomposer.com
+&& composer config -g repo.packagist composer https://mirrors.aliyun.com/composer 
 
 #更换国内源
+# COPY sources.list /etc/apt/sources.list
 RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 && apt-get update \
-&& apt-get install git -y\
-&& apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libssl-dev libnghttp2-dev gnupg apt-transport-https dialog\
+# RUN apt-get update \
+&& apt-get install libzip-dev apt-transport-https git -y\
+&& apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libssl-dev libnghttp2-dev gnupg apt-transport-https dialog  \
 && pecl channel-update pecl.php.net \
 && pecl install redis \
 && pecl install ds \
-&& docker-php-ext-enable redis ds \
-#&& docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+&& pecl install xlswriter \
+&& docker-php-ext-enable redis ds xlswriter \
+# && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+&& docker-php-ext-configure gd --with-freetype --with-jpeg  \
 && docker-php-ext-install -j$(nproc) gd \
 && docker-php-ext-install pdo pdo_mysql zip bcmath
 
@@ -26,8 +30,8 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 #swoole 4.4.5扩展
 # && mkdir /tmp  \
 # && curl -o ./tmp/swoole.tar.gz https://github.com/swoole/swoole-src/archive/v4.4.3.tar.gz -L  \
-COPY swoole-src-4.4.5.tar.gz /tmp
-RUN tar zxvf /tmp/swoole-src-4.4.5.tar.gz  \
+COPY swoole-src-4.5.2.tar.gz /tmp
+RUN tar zxvf /tmp/swoole-src-4.5.2.tar.gz  \
 # && cd /tmp/swoole-src-4.4.3 \
 && mv swoole-src* swoole-src  \
 && cd swoole-src  \
@@ -38,12 +42,16 @@ RUN tar zxvf /tmp/swoole-src-4.4.5.tar.gz  \
 && make clean && make &&  make install \
 && docker-php-ext-enable swoole
 
+#导入PHP ini 与 fpm配置
+COPY php.ini /usr/local/etc/php/
+COPY php-fpm.d /usr/local/etc/php-fpm.d/
+
 # sdebug 扩展
-COPY sdebug.tar.gz /tmp
-RUN tar zxvf /tmp/sdebug.tar.gz \
-&& cd xdebug \ 
-&& ./rebuild.sh \ 
-&& docker-php-ext-enable xdebug
+# COPY sdebug.tar.gz /tmp
+# RUN tar zxvf /tmp/sdebug.tar.gz \
+# && cd xdebug \ 
+# && ./rebuild.sh \ 
+# && docker-php-ext-enable xdebug
 
 
 #sqlsrv扩展
