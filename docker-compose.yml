@@ -17,27 +17,16 @@ services:
        app_net:
         ipv4_address: 172.18.0.4
 
-  # phpmyadmin:
-  #   build: phpmyadmin
-  #   image: void/phpmyadmin
-  #   environment:
-  #     PMA_ARBITRARY: 1
-  #     PMA_HOST: mysql
-  #     PMA_USER: test
-  #     PMA_PASSWORD: a12a12
-  #   ports:
-  #     - "8080:80"
-  #   networks:
-  #     - app_net
-
-  #redis:
-  #  build: redis
-  #  image: void/redis
-  #  ports:
-  #    - "6379:6379"
-  #  networks:
-  #     app_net:
-  #      ipv4_address: 172.18.0.5
+  redis:
+   build: redis
+   image: void/redis
+   ports:
+     - "6379:6379"
+   volumes: 
+     - "./www/redis/data:/data"  
+   networks:
+      app_net:
+       ipv4_address: 172.18.0.5
 
   php:
     build: php
@@ -63,6 +52,7 @@ services:
     ports:
       - "80:80"
       - "12223:12223"
+      - "12225:12225"
     networks:
        app_net:
         ipv4_address: 172.18.0.6
