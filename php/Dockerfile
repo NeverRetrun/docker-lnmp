@@ -1,4 +1,4 @@
-FROM php:7.4.7-fpm
+FROM php:7.4.11-fpm
 
 #时间
 ENV TZ=Asia/Shanghai
@@ -15,16 +15,20 @@ RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list \
 && apt-get update \
 # RUN apt-get update \
 && apt-get install libzip-dev apt-transport-https git -y\
-&& apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libssl-dev libnghttp2-dev gnupg apt-transport-https dialog  \
+&& apt-get install -y libfreetype6-dev libjpeg62-turbo-dev libpng-dev libssl-dev libnghttp2-dev gnupg apt-transport-https dialog libicu-dev libxml2-dev libxslt-dev\
 && pecl channel-update pecl.php.net \
 && pecl install redis \
-&& pecl install ds \
+# && pecl install ds \
 && pecl install xlswriter \
-&& docker-php-ext-enable redis ds xlswriter \
+&& docker-php-ext-enable redis xlswriter  \
+#PHP7.2
+# && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
+#PHP7.4
 # && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
 && docker-php-ext-configure gd --with-freetype --with-jpeg  \
+&& docker-php-ext-configure intl \
 && docker-php-ext-install -j$(nproc) gd \
-&& docker-php-ext-install pdo pdo_mysql zip bcmath
+&& docker-php-ext-install pdo pdo_mysql zip bcmath intl sockets soap xsl
 
 
 #swoole 4.4.5扩展
@@ -44,7 +48,7 @@ RUN tar zxvf /tmp/swoole-src-4.5.2.tar.gz  \
 
 #导入PHP ini 与 fpm配置
 COPY php.ini /usr/local/etc/php/
-COPY php-fpm.d /usr/local/etc/php-fpm.d/
+# COPY php-fpm.d /usr/local/etc/php-fpm.d/
 
 # sdebug 扩展
 # COPY sdebug.tar.gz /tmp

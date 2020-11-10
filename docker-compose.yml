@@ -14,34 +14,59 @@ services:
       MYSQL_USER: test
       MYSQL_PASSWORD: a12a12
     networks:
-       app_net:
-        ipv4_address: 172.18.0.4
+       app_net_2:
+        ipv4_address: 172.22.0.4
 
-  redis:
-   build: redis
-   image: void/redis
-   ports:
-     - "6379:6379"
-   volumes: 
-     - "./www/redis/data:/data"  
-   networks:
-      app_net:
-       ipv4_address: 172.18.0.5
-
+  # redis:
+  #  build: redis
+  #  image: void/redis
+  #  ports:
+  #    - "6379:6379"
+  #  volumes: 
+  #    - "./www/redis/data:/data"  
+  #  networks:
+  #     app_net:
+  #      ipv4_address: 172.18.0.5
+  # es01:
+  #   image: docker.elastic.co/elasticsearch/elasticsearch:7.9.0
+  #   container_name: es01
+  #   environment:
+  #     - discovery.type=single-node
+  #   ulimits:
+  #     memlock:
+  #       soft: -1
+  #       hard: -1
+  #   volumes:
+  #     - ./es/data01:/usr/share/elasticsearch/data
+  #   ports:
+  #     - 9200:9200
+  #   networks:
+  #     app_net:
+  #       ipv4_address: 172.18.0.7
+  # rabbitmq:
+  #   image: rabbitmq:3
+  #   container_name: rabbitmq01
+  #   environment: 
+  #     RABBITMQ_DEFAULT_USER: guest
+  #     RABBITMQ_DEFAULT_PASS: guest
+  #   networks:
+  #     app_net:
+  #       ipv4_address: 172.18.0.8
   php:
     build: php
     image: void/php
     volumes:
       - "./www/:/www"
-    ports:
-      - "9501:9501"
-      - "9502:9502"
-      - "9503:9503"
-      - "9504:9504"
-      - "9505:9505"
+    # ports:
+    #   - "9501:9501"
+    #   - "9502:9502"
+    #   - "9503:9503"
+    #   - "9504:9504"
+    #   - "9505:9505"
+    user: ${CURRENT_UID}  
     networks:
-       app_net:
-        ipv4_address: 172.18.0.3
+       app_net_2:
+        ipv4_address: 172.22.0.3
     # restart: always
 
   nginx: 
@@ -52,15 +77,16 @@ services:
     ports:
       - "80:80"
       - "12223:12223"
-      - "12225:12225"
+      - "12226:12226"
+      - "12227:12227"
     networks:
-       app_net:
-        ipv4_address: 172.18.0.6
+       app_net_2:
+        ipv4_address: 172.22.0.6
 networks:
-  app_net: 
+  app_net_2: 
     ipam:
       config:
-        - subnet: 172.18.0.0/16
+        - subnet: 172.22.0.0/16
           # gateway: 172.18.0.1
     # external: 
       # name: app_net
