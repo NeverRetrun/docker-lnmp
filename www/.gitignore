@@ -1,4 +1,2 @@
-/logs
 /mysql
 !index.php
-*
